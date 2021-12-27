@@ -2,7 +2,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 import sys
 import backend
-import keyboard
 
 #====================================Login System====================================
 class LoginSystem(object):
