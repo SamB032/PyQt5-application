@@ -17,10 +17,10 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>-70</x>
-      <y>-30</y>
-      <width>971</width>
-      <height>551</height>
+      <x>-10</x>
+      <y>-10</y>
+      <width>1011</width>
+      <height>591</height>
      </rect>
     </property>
     <property name="autoFillBackground">
