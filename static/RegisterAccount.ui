@@ -312,10 +312,17 @@ color: rgb(255, 255, 255);</string>
     </property>
    </widget>
    <zorder>label_5</zorder>
-   <zorder>label</zorder>
    <zorder>frame</zorder>
+   <zorder>label</zorder>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>repeat_password</tabstop>
+  <tabstop>name</tabstop>
+  <tabstop>button_register</tabstop>
+  <tabstop>password</tabstop>
+  <tabstop>username</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

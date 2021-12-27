@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 import sys
+import backend
 
 #====================================Login System====================================
 class LoginSystem(object):
@@ -117,7 +118,7 @@ class LoginSystem(object):
         def retranslateUi(self, MainWindow):
                 _translate = QtCore.QCoreApplication.translate
                 MainWindow.setWindowTitle("Login System")
-                self.label_2.setText(_translate("MainWindow", "LOGIN HERE"))
+                self.label_2.setText(_translate("MainWindow", " Login here"))
                 self.label_3.setText(_translate("MainWindow", "Username"))
                 self.label_4.setText(_translate("MainWindow", "Password"))
                 self.button_login.setText(_translate("MainWindow", "Login"))
@@ -126,18 +127,33 @@ class LoginSystem(object):
                 self.button_register.setText(_translate("MainWindow", "Register"))
         
         def register_account(self):
-                MainWindow.close()
+                MainWindow.hide()
                 self.window = QtWidgets.QMainWindow()
                 self.ui = RegisterAccount()
                 self.ui.setupUi(self.window)
                 self.window.show()
-                
+
         def login(self):
                 self.username_enter = self.username.text()
                 self.password_enter = self.password.text()
                 
-                print(self.username_enter, self.password_enter)
+                self.is_correct_details = backend.UserTable.check_credentials(self.username_enter, self.password_enter)
                 
+                msg = QMessageBox()
+
+                if self.is_correct_details == True:
+                        msg.setWindowTitle("Success")
+                        msg.setText("Logging in....")
+                        msg.setIcon(QMessageBox.Information)
+                        msg.setStandardButtons(QMessageBox.Ok)
+                        x = msg.exec_()
+                else:
+                        msg = QMessageBox()
+                        msg.setWindowTitle("Error")
+                        msg.setText("Incorrect username and/or Password")          
+                        msg.setIcon(QMessageBox.Critical)
+                        msg.setStandardButtons(QMessageBox.Retry)
+                        x = msg.exec_()           
 #====================================Register Account====================================
 class RegisterAccount(object):
         def setupUi(self, MainWindow):
@@ -276,7 +292,7 @@ class RegisterAccount(object):
                 self.password.setEchoMode(QtWidgets.QLineEdit.Password)
                 self.repeat_password.setEchoMode(QtWidgets.QLineEdit.Password)
                 
-                self.button_register.clicked.connect(self.register_user)
+                self.button_register.clicked.connect(lambda : self.register_user(MainWindow))
 
                 self.retranslateUi(MainWindow)
                 QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -294,8 +310,8 @@ class RegisterAccount(object):
                 self.repeat_password.setPlaceholderText(_translate("MainWindow", "repeat password"))
                 self.label_6.setText(_translate("MainWindow", "Name"))
                 self.name.setPlaceholderText(_translate("MainWindow", "name"))
-                
-        def register_user(self):
+   
+        def register_user(self, MainWindow):
                 self.username_enter = self.username.text()
                 self.password_enter = self.password.text()
                 self.repeat_password_enter = self.repeat_password.text()
@@ -306,15 +322,16 @@ class RegisterAccount(object):
                 if len(self.username_enter) < 3:
                         self.error_with_data.append("• A valid username hasn't entered")
                 
+                if backend.UserTable.user_name_exsist(self.username_enter) == True:
+                        self.error_with_data.append("• Username has already been taken")
+                
                 if self.password_enter != self.repeat_password_enter:
                         self.error_with_data.append("• Passwords do not match")
                         
                 if len(self.password_enter) < 3:
-                        print("password")
                         self.error_with_data.append("• A valid password hasn't been entered")
                 
                 if len(self.name_enter) < 1:
-                        print("name")
                         self.error_with_data.append("• A name has been entered")
                 
                 if len(self.error_with_data) > 0:
@@ -332,9 +349,21 @@ class RegisterAccount(object):
                         msg.setInformativeText(error_message)
                         x = msg.exec_()
                 else:
-                        self.name_enter = self.name_enter[0].upper() + self.name_enter[1].lower()
-                        pass
-                        #to database
+                        self.name_enter = self.name_enter[0].upper() + self.name_enter[1:].lower()
+                        backend.UserTable().insert(self.name_enter, self.username_enter, self.password_enter)
+                        
+                        msg = QMessageBox()
+                        msg.setWindowTitle("Account Created")
+                        msg.setText("The account has been created, please login")
+                        msg.setIcon(QMessageBox.Information)
+                        msg.setStandardButtons(QMessageBox.Ok)
+                        x = msg.exec_()
+                        
+                        MainWindow.hide()
+                        self.window = QtWidgets.QMainWindow()
+                        self.ui = LoginSystem()
+                        self.ui.setupUi(self.window)
+                        self.window.show()
                         
 if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
