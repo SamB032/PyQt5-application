@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 import sys
 import backend
+import keyboard
 
 #====================================Login System====================================
 class LoginSystem(object):
@@ -153,7 +154,8 @@ class LoginSystem(object):
                         msg.setText("Incorrect username and/or Password")          
                         msg.setIcon(QMessageBox.Critical)
                         msg.setStandardButtons(QMessageBox.Retry)
-                        x = msg.exec_()           
+                        x = msg.exec_()   
+              
 #====================================Register Account====================================
 class RegisterAccount(object):
         def setupUi(self, MainWindow):
@@ -332,7 +334,7 @@ class RegisterAccount(object):
                         self.error_with_data.append("• A valid password hasn't been entered")
                 
                 if len(self.name_enter) < 1:
-                        self.error_with_data.append("• A name has been entered")
+                        self.error_with_data.append("• A name hasn't been entered")
                 
                 if len(self.error_with_data) > 0:
                         msg = QMessageBox()
