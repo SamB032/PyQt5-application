@@ -334,36 +334,30 @@ class RegisterAccount(object):
                 self.repeat_password_enter = self.repeat_password.text()
                 self.name_enter = self.name.text().lower()
 
-                self.error_with_data = []
+                self.error_message = ""
                 
                 if len(self.username_enter) < 3:
-                        self.error_with_data.append("• A valid username hasn't entered")
+                        self.error_message += "• A valid username hasn't entered\n"
                 
                 if backend.UserTable.user_name_exsist(self.username_enter) == True:
-                        self.error_with_data.append("• Username has already been taken")
+                        self.error_message +="• Username has already been taken\n"
                 
                 if self.password_enter != self.repeat_password_enter:
-                        self.error_with_data.append("• Passwords do not match")
+                        self.error_message += "• Passwords do not match\n"
                         
                 if len(self.password_enter) < 3:
-                        self.error_with_data.append("• A valid password hasn't been entered")
+                        self.error_message += "• A valid password hasn't been entered\n"
                 
                 if len(self.name_enter) < 1:
-                        self.error_with_data.append("• A name hasn't been entered")
+                        self.error_message += "• A name hasn't been entered\n"
                 
-                if len(self.error_with_data) > 0:
+                if self.error_message != "":
                         msg = QMessageBox()
                         msg.setWindowTitle("Invalid data")
-                        msg.setText("Following errors that have occured: ")
-                        
-                        error_message = ""
-                        i = 0
-                        for i in range(len(self.error_with_data)):
-                                error_message += self.error_with_data[i] + "\n"
-                                
+                        msg.setText("Following errors that have occured: ")                                
                         msg.setIcon(QMessageBox.Critical)
                         msg.setStandardButtons(QMessageBox.Retry)
-                        msg.setInformativeText(error_message)
+                        msg.setInformativeText(self.error_message)
                         x = msg.exec_()
                 else:
                         self.name_enter = self.name_enter[0].upper() + self.name_enter[1:].lower()
@@ -543,7 +537,6 @@ class NoteWindow():
                 self.ui.setupUi(self.window)
                 self.window.show()
                         
-                
 if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
         MainWindow = QtWidgets.QMainWindow()
