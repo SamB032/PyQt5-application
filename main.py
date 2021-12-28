@@ -5,6 +5,9 @@ import backend
 
 #====================================Login System====================================
 class LoginSystem(object):
+        
+        logged_user_id = 0
+        
         def setupUi(self, MainWindow):
                 MainWindow.setObjectName("MainWindow")
                 MainWindow.resize(845, 487)
@@ -138,15 +141,24 @@ class LoginSystem(object):
                 self.password_enter = self.password.text()
                 
                 self.is_correct_details = backend.UserTable.check_credentials(self.username_enter, self.password_enter)
-                
+                self.login = self.is_correct_details[0]
+
                 msg = QMessageBox()
 
-                if self.is_correct_details == True:
+                if self.login == True:
                         msg.setWindowTitle("Success")
                         msg.setText("Logging in....")
                         msg.setIcon(QMessageBox.Information)
                         msg.setStandardButtons(QMessageBox.Ok)
                         x = msg.exec_()
+                        
+                        LoginSystem.record_user(self.is_correct_details[1])
+                        
+                        MainWindow.hide()
+                        self.window = QtWidgets.QMainWindow()
+                        self.ui = NoteWindow()
+                        self.ui.setupUi(self.window)                        
+                        self.window.show()
                 else:
                         msg = QMessageBox()
                         msg.setWindowTitle("Error")
@@ -154,6 +166,10 @@ class LoginSystem(object):
                         msg.setIcon(QMessageBox.Critical)
                         msg.setStandardButtons(QMessageBox.Retry)
                         x = msg.exec_()   
+                        
+        @classmethod
+        def record_user(cls, user_id):
+                cls.logged_user_id = user_id
               
 #====================================Register Account====================================
 class RegisterAccount(object):
@@ -366,6 +382,168 @@ class RegisterAccount(object):
                         self.ui.setupUi(self.window)
                         self.window.show()
                         
+class NoteWindow():
+        def setupUi(self, MainWindow):
+                MainWindow.setObjectName("MainWindow")
+                MainWindow.resize(845, 487)
+                self.centralwidget = QtWidgets.QWidget(MainWindow)
+                self.centralwidget.setObjectName("centralwidget")
+                self.label = QtWidgets.QLabel(self.centralwidget)
+                self.label.setGeometry(QtCore.QRect(-10, -10, 1011, 591))
+                self.label.setAutoFillBackground(False)
+                self.label.setText("")
+                self.label.setScaledContents(True)
+                self.label.setObjectName("label")
+                self.frame = QtWidgets.QFrame(self.centralwidget)
+                self.frame.setGeometry(QtCore.QRect(120, 60, 601, 401))
+                self.frame.setStyleSheet("background-color: rgba(0, 0, 0, 127); \n"
+        "border: rgba(0, 0, 0, 127);\n"
+        "border-radius: 20px;")
+                self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+                self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+                self.frame.setObjectName("frame")
+                self.label_2 = QtWidgets.QLabel(self.frame)
+                self.label_2.setGeometry(QtCore.QRect(270, 10, 61, 31))
+                font = QtGui.QFont()
+                font.setFamily("Noto Sans Khmer UI")
+                font.setPointSize(16)
+                font.setBold(False)
+                font.setItalic(False)
+                font.setWeight(9)
+                self.label_2.setFont(font)
+                self.label_2.setStyleSheet("background-color: rgba(0, 0, 0, 0); \n"
+        "border: rgba(0, 0, 0, 0);\n"
+        "font: 75 16pt \"Noto Sans Khmer UI\";\n"
+        "color: rgb(255, 255, 255);")
+                self.label_2.setObjectName("label_2")
+                self.button_delete = QtWidgets.QPushButton(self.frame)
+                self.button_delete.setGeometry(QtCore.QRect(230, 340, 141, 41))
+                font = QtGui.QFont()
+                font.setPointSize(12)
+                font.setBold(False)
+                font.setWeight(50)
+                self.button_delete.setFont(font)
+                self.button_delete.setStyleSheet("background-color: rgb(224, 27, 36);\n"
+        "color: rgb(255, 255, 255);")
+                self.button_delete.setObjectName("button_delete")
+                self.note_list = QtWidgets.QListWidget(self.frame)
+                self.note_list.setGeometry(QtCore.QRect(40, 60, 521, 192))
+                self.note_list.setStyleSheet("font: 75 12pt \"Noto Sans Khmer UI\";\n"
+        "color: rgb(255, 255, 255);")
+                self.note_list.setObjectName("note_list")
+                self.button_create = QtWidgets.QPushButton(self.frame)
+                self.button_create.setGeometry(QtCore.QRect(50, 340, 141, 41))
+                font = QtGui.QFont()
+                font.setPointSize(12)
+                font.setBold(False)
+                font.setWeight(50)
+                self.button_create.setFont(font)
+                self.button_create.setStyleSheet("background-color: rgb(224, 27, 36);\n"
+        "color: rgb(255, 255, 255);")
+                self.button_create.setObjectName("button_create")
+                self.note_box = QtWidgets.QLineEdit(self.frame)
+                self.note_box.setGeometry(QtCore.QRect(40, 260, 521, 61))
+                self.note_box.setStyleSheet("font: 75 12pt \"Noto Sans Khmer UI\";\n"
+        "color: rgb(255, 255, 255);")
+                self.note_box.setObjectName("note_box")
+                self.button_logout = QtWidgets.QPushButton(self.frame)
+                self.button_logout.setGeometry(QtCore.QRect(410, 340, 141, 41))
+                font = QtGui.QFont()
+                font.setPointSize(12)
+                font.setBold(False)
+                font.setWeight(50)
+                self.button_logout.setFont(font)
+                self.button_logout.setStyleSheet("background-color: rgb(224, 27, 36);\n"
+        "color: rgb(255, 255, 255);")
+                self.button_logout.setObjectName("button_logout")
+                self.label_5 = QtWidgets.QLabel(self.centralwidget)
+                self.label_5.setGeometry(QtCore.QRect(-3, -3, 861, 501))
+                self.label_5.setText("")
+                self.label_5.setPixmap(QtGui.QPixmap("static/pebble.jpeg"))
+                self.label_5.setScaledContents(True)
+                self.label_5.setObjectName("label_5")
+                self.label_5.raise_()
+                self.label.raise_()
+                self.frame.raise_()
+                MainWindow.setCentralWidget(self.centralwidget)
+                
+                self.button_create.clicked.connect(self.create_note)
+                self.button_delete.clicked.connect(self.delete_note)
+                self.button_logout.clicked.connect(lambda : self.logout(MainWindow))
+                
+                self.check_list()
+
+                self.retranslateUi(MainWindow)
+                QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        
+        def retranslateUi(self, MainWindow):
+                _translate = QtCore.QCoreApplication.translate
+                MainWindow.setWindowTitle("My Notes")
+                self.label_2.setText(_translate("MainWindow", "Notes"))
+                self.button_delete.setText(_translate("MainWindow", "Delete Note"))
+                self.button_create.setText(_translate("MainWindow", "Create Note"))
+                self.button_logout.setText(_translate("MainWindow", "Logout"))
+        
+        def create_note(self):
+                self.note = self.note_box.text()
+                if self.note == "":
+                        msg = QMessageBox()
+                        msg.setWindowTitle("Error")
+                        msg.setText("A note hasn't been written")          
+                        msg.setIcon(QMessageBox.Critical)
+                        msg.setStandardButtons(QMessageBox.Retry)
+                        x = msg.exec_()   
+                else:   
+                        backend.NoteTable().insert(self.note, LoginSystem.logged_user_id)
+                        self.note_box.setText("")
+                        self.check_list()
+        
+        def delete_note(self):
+                try:
+                        self.note_selected = self.note_list.currentItem().text()
+                        self.note_is_selected = True
+                except AttributeError:
+                        self.note_is_selected = False
+                
+                if self.note_is_selected == True:
+                        
+                        msg = QMessageBox()
+                        msg.setWindowTitle("Delete Note")
+                        msg.setText("Would you like to delete selected note?")          
+                        msg.setIcon(QMessageBox.Warning)
+                        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+                        msg.setDefaultButton(QMessageBox.Cancel)
+                        
+                        x = msg.exec_()  
+                        
+                        if msg.clickedButton().text() == "&Yes":        
+                                backend.NoteTable().delte_note(self.note_selected.split(".")[0])
+                                self.check_list()
+                else:
+                        msg = QMessageBox()
+                        msg.setWindowTitle("Error")
+                        msg.setText("A note hasn't been selected")          
+                        msg.setIcon(QMessageBox.Critical)
+                        msg.setStandardButtons(QMessageBox.Retry)
+                        x = msg.exec_()   
+                
+        def check_list(self):
+                self.note_list.clear()
+                self.query = backend.NoteTable().return_user_notes(LoginSystem.logged_user_id)
+                try : 
+                        for row in self.query:
+                                self.note_list.addItem(QtWidgets.QListWidgetItem(f'{row.note_id}.   {row.data}'))
+                except:
+                        pass
+                
+        def logout(self, MainWindow):
+                MainWindow.hide()
+                self.window = QtWidgets.QMainWindow()
+                self.ui = LoginSystem()
+                self.ui.setupUi(self.window)
+                self.window.show()
+                        
+                
 if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
         MainWindow = QtWidgets.QMainWindow()

@@ -1,7 +1,9 @@
 from sqlalchemy import (create_engine, MetaData)
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import (Column, Integer, String)
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql.schema import ForeignKey
+from sqlalchemy.sql.visitors import InternalTraversal
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.sql import exists
 import os.path
@@ -23,9 +25,21 @@ class User(Base):
         self.name = name
         self.username = username
         self.password = password
-        
+
+class Note(Base):
+    __tablename__ = "note"
+    note_id = Column(Integer, primary_key = True)
+    data = Column(String(10000))
+    user_id = Column(Integer, ForeignKey('user.user_id'))
+    notes = relationship('User')
+    
+    def __init__(self, data, user_id):
+        self.data = data
+        self.user_id = user_id
+    
 if os.path.exists("database.db") == False:
     Base.metadata.tables["user"].create(bind = engine)
+    Base.metadata.tables["note"].create(bind = engine)
 
 
 #==================================Classes to interact with db====================================
@@ -43,8 +57,20 @@ class UserTable():
         
         try: 
             if check_password_hash(row.password, password) == True:
-                return True
+                return [True, row.user_id]
             else:
-                return False
+                return [False]
         except AttributeError:
-            return False
+            return [False]
+        
+class NoteTable():
+    def insert(self, data, user_id):
+        note = Note(data, user_id)
+        session.add(note)
+        session.commit()
+    
+    def return_user_notes(self, user_id):
+        return session.query(Note).filter(Note.user_id == user_id)
+    
+    def delte_note(self, note_id):
+        session.query(Note).filter(Note.note_id == note_id).delete()
