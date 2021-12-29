@@ -14,3 +14,7 @@ Then install the required python packages:
 ```
 $ pip install sqlalchemy pyqt5 sqlalchemy werkzeug
 ```
+Then go into the directory and run the main.py file by:
+```
+cd PyQt5-application && python main.py
+```
