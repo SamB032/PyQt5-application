@@ -1,59 +1,31 @@
-from sqlalchemy import (create_engine, MetaData)
-from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy import (Column, Integer, String)
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.visitors import InternalTraversal
+from sqlalchemy import create_engine, MetaData
+from sqlalchemy.orm import sessionmaker
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.sql import exists
 import os.path
+import models
 
 engine = create_engine("sqlite:///database.db")
 session = sessionmaker(bind = engine)()
 
-Base = declarative_base()
 meta = MetaData()
-
-class User(Base):
-    __tablename__ = "user"
-    user_id = Column(Integer, primary_key = True)
-    name = Column(String)
-    username = Column(String)
-    password = Column(String)
-    
-    def __init__(self, name, username, password):
-        self.name = name
-        self.username = username
-        self.password = password
-
-class Note(Base):
-    __tablename__ = "note"
-    note_id = Column(Integer, primary_key = True)
-    data = Column(String(10000))
-    user_id = Column(Integer, ForeignKey('user.user_id'))
-    notes = relationship('User')
-    
-    def __init__(self, data, user_id):
-        self.data = data
-        self.user_id = user_id
     
 if os.path.exists("database.db") == False:
     Base.metadata.tables["user"].create(bind = engine)
     Base.metadata.tables["note"].create(bind = engine)
 
-
-#==================================Classes to interact with db====================================
+#==================================Classes to interact with models====================================
 class UserTable():
     def insert(self, name, username, password):
-        user = User(name, username.lower(), generate_password_hash(password, method='sha256'))
+        user = models.User(name, username.lower(), generate_password_hash(password, method='sha256'))
         session.add(user)
         session.commit()
     
     def user_name_exsist(username):
-        return session.query(exists().where(User.username == username.lower())).scalar()
+        return session.query(exists().where(models.User.username == username.lower())).scalar()
         
     def check_credentials(username = "", password = ""):
-        row = session.query(User).filter(User.username == username).first()
+        row = session.query(models.User).filter(models.User.username == username).first()
         
         try: 
             if check_password_hash(row.password, password) == True:
@@ -65,12 +37,13 @@ class UserTable():
         
 class NoteTable():
     def insert(self, data, user_id):
-        note = Note(data, user_id)
+        note = models.Note(data, user_id)
         session.add(note)
         session.commit()
     
     def return_user_notes(self, user_id):
-        return session.query(Note).filter(Note.user_id == user_id)
+        return session.query(models.Note).filter(models.Note.user_id == user_id)
     
     def delte_note(self, note_id):
-        session.query(Note).filter(Note.note_id == note_id).delete()
+        session.query(models.Note).filter(models.Note.note_id == note_id).delete()
+        session.commit()

@@ -2,7 +2,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 import sys
 import backend
-
 #====================================Login System====================================
 class LoginSystem(object):
         
@@ -112,8 +111,8 @@ class LoginSystem(object):
                 self.frame.raise_()
                 MainWindow.setCentralWidget(self.centralwidget)
                 
-                self.button_login.clicked.connect(self.login)
-                self.button_register.clicked.connect(self.register_account)
+                self.button_login.clicked.connect(lambda : self.login(MainWindow))
+                self.button_register.clicked.connect(lambda : self.register_account(MainWindow))
 
                 self.retranslateUi(MainWindow)
                 QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -129,23 +128,23 @@ class LoginSystem(object):
                 self.username.setPlaceholderText(_translate("MainWindow", "username"))
                 self.button_register.setText(_translate("MainWindow", "Register"))
         
-        def register_account(self):
+        def register_account(self, MainWindow):
                 MainWindow.hide()
                 self.window = QtWidgets.QMainWindow()
                 self.ui = RegisterAccount()
                 self.ui.setupUi(self.window)
                 self.window.show()
 
-        def login(self):
+        def login(self, MainWindow):
                 self.username_enter = self.username.text()
                 self.password_enter = self.password.text()
                 
                 self.is_correct_details = backend.UserTable.check_credentials(self.username_enter, self.password_enter)
-                self.login = self.is_correct_details[0]
+                self.login_bool = self.is_correct_details[0]
 
                 msg = QMessageBox()
 
-                if self.login == True:
+                if self.login_bool == True:
                         msg.setWindowTitle("Success")
                         msg.setText("Logging in....")
                         msg.setIcon(QMessageBox.Information)
