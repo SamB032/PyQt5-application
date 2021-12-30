@@ -12,7 +12,7 @@ $ git clone https://github.com/EndoEU/PyQt5-application.git
 ```
 Then install the required python packages:
 ```
-$ pip install sqlalchemy pyqt5 sqlalchemy werkzeug
+$ pip install pyqt5 sqlalchemy werkzeug
 ```
 Then go into the directory and run the main.py file by:
 ```
