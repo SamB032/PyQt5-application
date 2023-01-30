@@ -8,7 +8,7 @@ This is the PyQt5 application I have made. It makes use of databases to save not
 
 Firstly you need to clone this git repo, in the terminal, write:
 ```
-$ git clone https://github.com/EndoEU/PyQt5-application.git
+$ git clone https://github.com/SamB032/PyQt5-application.git
 ```
 Then install the required python packages:
 ```
